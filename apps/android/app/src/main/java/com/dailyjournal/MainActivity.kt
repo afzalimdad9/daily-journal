@@ -415,7 +415,6 @@ private fun DailyJournalScreen(repository: BlogRepository, initialSlug: String?)
                                 }
                             }
                         }
-                        }
                     }
                 }
             }
