@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import type { BlogPostSummary } from "@blog/shared-types";
@@ -13,8 +13,10 @@ export default function SearchPage() {
   const [posts, setPosts] = useState<BlogPostSummary[]>([]);
   const [total, setTotal] = useState(0);
   const [error, setError] = useState("");
+  const latestRequest = useRef(0);
 
   async function search(value: string) {
+    const requestId = ++latestRequest.current;
     setQuery(value);
     if (!value.trim()) {
       setPosts([]);
@@ -26,10 +28,12 @@ export default function SearchPage() {
       const response = await fetch(`/api/posts?q=${encodeURIComponent(value)}&locale=${encodeURIComponent(locale)}`);
       if (!response.ok) throw new Error(`Search request failed: ${response.status}`);
       const data = await response.json() as { posts: BlogPostSummary[]; total: number };
+      if (requestId !== latestRequest.current) return;
       setPosts(data.posts);
       setTotal(data.total);
       setError("");
     } catch {
+      if (requestId !== latestRequest.current) return;
       setPosts([]);
       setTotal(0);
       setError(t("searchError"));
@@ -48,7 +52,7 @@ export default function SearchPage() {
               <label className="sr-only" htmlFor="article-search">{t("searchPlaceholder")}</label>
               <input id="article-search" className="search-field" type="search" value={query} onChange={(event) => void search(event.target.value)} placeholder={t("searchPlaceholder")} />
             </div>
-            <span className="search-button" aria-hidden="true">{t("search")}</span>
+            <button className="search-button" type="button" onClick={() => void search(query)}>{t("search")}</button>
           </div>
           {error && <p role="alert" className="search-status">{error}</p>}
           {!error && query.trim() && <p className="search-status" role="status">{total} {t("articlesLabel")}</p>}
