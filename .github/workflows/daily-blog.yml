@@ -24,7 +24,9 @@ jobs:
           node-version: 20
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-      - name: Generate and validate article
+      - name: Test article validation
+        run: node --test scripts/generate-blog.test.js
+      - name: Generate and validate all language editions
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           BLOG_TOPIC: ${{ vars.BLOG_TOPIC }}
