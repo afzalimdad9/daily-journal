@@ -17,14 +17,15 @@ export default async function CategoryPage({ params }: Props) {
   const posts = getPosts(locale).filter((post) => post.category?.toLowerCase() === categoryName.toLowerCase());
   if (!posts.length) notFound();
   const t = await getTranslations({ locale });
+  const categoryTitle = posts[0].category ?? categoryName;
 
   return (
     <>
       <header className="page-hero">
         <div className="container">
           <span className="eyebrow">{t("categoryLabel")}</span>
-          <h1 className="page-title">{categoryName}</h1>
-          <p className="page-intro">{posts.length} {t("articlesLabel")}</p>
+          <h1 className="page-title">{categoryTitle}</h1>
+          <p className="page-intro">{posts.length} {t(posts.length === 1 ? "articleLabel" : "articlesLabel")}</p>
         </div>
       </header>
       <section className="container prose-page">

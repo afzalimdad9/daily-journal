@@ -52,7 +52,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <div className="container">
             <div className="section-heading">
               <div>
-                <p className="section-kicker">{posts.length} {t("articlesLabel")}</p>
+                <p className="section-kicker">{posts.length} {t(posts.length === 1 ? "articleLabel" : "articlesLabel")}</p>
                 <h2 className="section-title">{t("latest")}</h2>
               </div>
             </div>

@@ -55,7 +55,7 @@ export default function SearchPage() {
             <button className="search-button" type="button" onClick={() => void search(query)}>{t("search")}</button>
           </div>
           {error && <p role="alert" className="search-status">{error}</p>}
-          {!error && query.trim() && <p className="search-status" role="status">{total} {t("articlesLabel")}</p>}
+          {!error && query.trim() && <p className="search-status" role="status">{total} {t(total === 1 ? "articleLabel" : "articlesLabel")}</p>}
         </div>
       </header>
       <section className="container prose-page">
