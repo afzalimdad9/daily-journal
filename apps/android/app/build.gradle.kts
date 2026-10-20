@@ -24,6 +24,11 @@ android {
         manifestPlaceholders["adMobAppId"] = providers.gradleProperty("adMobAppId").orNull ?: "ca-app-pub-3940256099942544~3347511713"
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     signingConfigs {
         create("release") {
             storeFile = System.getenv("ANDROID_KEYSTORE_PATH")?.let { project.file(it) }
