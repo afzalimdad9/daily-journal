@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import type { BlogPostSummary } from "@blog/shared-types";
 import { formatDate } from "@/lib/format-date";
+import { SearchResultsSkeleton } from "@/components/loading-skeleton";
 
 export default function SearchPage() {
   const t = useTranslations();
@@ -20,8 +21,6 @@ export default function SearchPage() {
     const requestId = ++latestRequest.current;
     setQuery(value);
     if (!value.trim()) {
-      setPosts([]);
-      setTotal(0);
       setError("");
       setSearching(false);
       return;
@@ -68,6 +67,7 @@ export default function SearchPage() {
         </div>
       </header>
       <section className="container prose-page">
+        {searching && posts.length === 0 && <SearchResultsSkeleton />}
         {query.trim() && !error && !searching && posts.length === 0 && <p className="empty-state">{t("noSearchResults")}</p>}
         {posts.length > 0 && (
           <div className="search-results">
