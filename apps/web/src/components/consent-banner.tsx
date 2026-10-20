@@ -7,12 +7,14 @@ import { Button } from "@/components/ui/button";
 export function ConsentBanner() {
   const t = useTranslations();
   const [show, setShow] = useState(false);
+  const adsEnabled = Boolean(process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID);
 
   useEffect(() => {
+    if (!adsEnabled) return;
     setShow(localStorage.getItem("ad-consent") === null);
-  }, []);
+  }, [adsEnabled]);
 
-  if (!show) return null;
+  if (!adsEnabled || !show) return null;
   return (
     <aside className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-2xl rounded-xl border bg-[var(--surface)] p-4 shadow-xl">
       <p className="mb-3 text-sm">{t("consentMessage")}</p>

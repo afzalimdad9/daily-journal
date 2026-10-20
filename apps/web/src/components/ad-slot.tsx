@@ -24,8 +24,10 @@ export function AdSlot({ slotId, format, className = "" }: AdSlotProps) {
   const [blocked, setBlocked] = useState(false);
   const [consented, setConsented] = useState(false);
   const adUnitId = adUnits[slotId];
+  const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
 
   useEffect(() => {
+    if (!client || !adUnitId) return;
     const syncConsent = () => setConsented(localStorage.getItem("ad-consent") === "accepted");
     syncConsent();
     window.addEventListener("ad-consent-changed", syncConsent);
@@ -40,12 +42,11 @@ export function AdSlot({ slotId, format, className = "" }: AdSlotProps) {
       observer.disconnect();
       window.removeEventListener("ad-consent-changed", syncConsent);
     };
-  }, []);
+  }, [client, adUnitId, consented]);
 
   useEffect(() => {
     if (!visible || !consented) return;
     setBlocked(false);
-    const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
     if (!client || !adUnitId) {
       setBlocked(true);
       return;
@@ -96,22 +97,24 @@ export function AdSlot({ slotId, format, className = "" }: AdSlotProps) {
       script?.removeEventListener("load", onLoad);
       script?.removeEventListener("error", onError);
     };
-  }, [visible, consented, adUnitId]);
+  }, [visible, consented, adUnitId, client]);
+
+  if (!client || !adUnitId || !consented) return null;
 
   return (
     <div ref={container} className={`ad-slot ad-${format} ${className}`} aria-label="Advertisement">
-      {visible && consented && !blocked && process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && adUnitId ? (
+      {visible && !blocked ? (
         <ins
           className="adsbygoogle"
           style={{ display: "block", minHeight: 50 }}
-          data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID ?? ""}
+          data-ad-client={client}
           data-ad-slot={adUnitId}
           data-ad-format="auto"
           data-full-width-responsive="true"
         />
-      ) : (
+      ) : blocked ? (
         <span>{blocked ? "Please consider supporting this site by allowing ads." : "Advertisement"}</span>
-      )}
+      ) : null}
     </div>
   );
 }
