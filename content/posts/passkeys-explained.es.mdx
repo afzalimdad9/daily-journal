@@ -1,0 +1,44 @@
+---
+title: "Claves de acceso: una explicación sin exageraciones"
+date: "2026-10-18"
+description: "Cómo las claves de acceso sustituyen a las contraseñas escritas, qué ocurre al iniciar sesión y qué conviene comprobar antes de cambiar una cuenta."
+slug: "passkeys-explained"
+locale: "es"
+keywords: ["claves de acceso", "contraseñas", "inicio de sesión", "autenticación", "FIDO"]
+author: "Daily Journal Editorial"
+category: "Tecnología"
+---
+
+# Claves de acceso: una explicación sin exageraciones
+
+Una clave de acceso es una credencial de inicio de sesión basada en criptografía de clave pública. En lugar de escribir un secreto compartido en un sitio web, tu dispositivo o gestor de contraseñas usa una clave privada para responder a un desafío del servicio. El servicio conserva la clave pública correspondiente, que no permite reconstruir la clave privada.
+
+Para quien inicia sesión, la experiencia suele consistir en aprobar una solicitud con el PIN del dispositivo, la huella dactilar o el reconocimiento facial. Si se usa biometría, la comprobación la realiza el dispositivo; no se envía al sitio web como parte de la clave de acceso.
+
+## ¿Qué cambia respecto a una contraseña?
+
+Con una contraseña, creas un secreto y se lo presentas a un servicio al iniciar sesión. Esto genera problemas conocidos: las personas reutilizan contraseñas, las escriben en páginas falsas convincentes o pierden el rastro de dónde las guardaron.
+
+Una clave de acceso está vinculada al servicio que la creó. En los sistemas de inicio de sesión basados en estándares, el navegador comprueba si la credencial corresponde al sitio que solicita la autenticación. Así resulta mucho más difícil usar por error una clave de acceso en una página que imita a la original. La [introducción a las claves de acceso de FIDO Alliance](https://fidoalliance.org/passkeys/) y el [estándar Web Authentication](https://www.w3.org/TR/webauthn-3/) explican el funcionamiento subyacente.
+
+## Dónde se guarda tu clave de acceso
+
+Algunas claves de acceso están vinculadas a un dispositivo. Otras se sincronizan entre dispositivos mediante la plataforma o el gestor de contraseñas que hayas elegido. La sincronización puede facilitar la recuperación de la cuenta y el cambio de dispositivo, pero también hace que importen tu cuenta del proveedor y sus opciones de recuperación.
+
+Antes de sustituir una contraseña, comprueba qué proveedor guarda la clave, cómo iniciarás sesión desde otro dispositivo y qué método de recuperación ofrece el servicio. Si un servicio permite varias claves de acceso o llaves de seguridad, añadir un segundo método compatible puede reducir el riesgo de que perder un dispositivo te deje sin acceso.
+
+## Una lista tranquila para configurarla
+
+1. Empieza con una cuenta importante que admita claramente claves de acceso, como una cuenta que ya proteges con autenticación multifactor.
+2. Lee las instrucciones de recuperación del servicio antes de cambiar los métodos de inicio de sesión.
+3. Confirma dónde se guarda la clave y si está disponible en tus otros dispositivos.
+4. Conserva otra opción de recuperación a la que realmente puedas acceder y guarda los códigos de respaldo en un lugar seguro.
+5. Prueba a iniciar sesión desde otro dispositivo o navegador antes de eliminar la alternativa basada en contraseña.
+
+Los nombres y las solicitudes varían según el servicio. Si un sitio web te pide escanear un código QR o aprobar un inicio de sesión, asegúrate de haber iniciado el proceso en el servicio auténtico y de entender qué dispositivo estás autorizando.
+
+## No es motivo para abandonar las demás medidas
+
+Las claves de acceso reducen algunos riesgos relacionados con las contraseñas, pero no hacen desaparecer todos los problemas de una cuenta. Un dispositivo comprometido, un proceso de recuperación débil o un intento de ingeniería social todavía pueden ser importantes. Protege tus dispositivos y canales de recuperación, y revisa las opciones de seguridad de cada servicio.
+
+No tienes que cambiar todas tus cuentas de una vez. Prueba con una, confirma que puedes recuperarla y decide si la comodidad y las opciones de recuperación encajan en tu rutina. Es una medida más útil que tratar cualquier nueva tecnología de inicio de sesión como si fuera mágica.
