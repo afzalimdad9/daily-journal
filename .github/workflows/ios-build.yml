@@ -1,0 +1,71 @@
+name: iOS Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/ios/**"
+      - ".github/workflows/ios-build.yml"
+    tags: ["ios-v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: false
+          working-directory: apps/ios
+      - name: Install Fastlane
+        run: bundle install
+        working-directory: apps/ios
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        run: xcodegen generate --spec project.yml
+        working-directory: apps/ios
+      - name: Configure signing
+        env:
+          IOS_CERT_P12_BASE64: ${{ secrets.IOS_CERT_P12_BASE64 }}
+          IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+          IOS_PROVISIONING_BASE64: ${{ secrets.IOS_PROVISIONING_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          test -n "$IOS_CERT_P12_BASE64" -a -n "$IOS_CERT_PASSWORD" -a -n "$IOS_PROVISIONING_BASE64" -a -n "$KEYCHAIN_PASSWORD" || { echo "iOS signing secrets are required" >&2; exit 1; }
+          CERT_PATH="$RUNNER_TEMP/signing.p12"
+          PROFILE_PATH="$RUNNER_TEMP/profile.mobileprovision"
+          KEYCHAIN_PATH="$RUNNER_TEMP/build.keychain-db"
+          echo "$IOS_CERT_P12_BASE64" | base64 --decode > "$CERT_PATH"
+          echo "$IOS_PROVISIONING_BASE64" | base64 --decode > "$PROFILE_PATH"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -P "$IOS_CERT_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH"
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c 'Print UUID' /dev/stdin <<< "$(security cms -D -i "$PROFILE_PATH")")
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
+      - name: Build signed IPA
+        env:
+          CONTENT_API_URL: ${{ vars.CONTENT_API_URL }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
+          ADMOB_IOS_APP_ID: ${{ vars.ADMOB_IOS_APP_ID }}
+          ADMOB_IOS_BANNER_UNIT_ID: ${{ vars.ADMOB_IOS_BANNER_UNIT_ID }}
+          ADMOB_IOS_NATIVE_UNIT_ID: ${{ vars.ADMOB_IOS_NATIVE_UNIT_ID }}
+          ADMOB_IOS_INTERSTITIAL_UNIT_ID: ${{ vars.ADMOB_IOS_INTERSTITIAL_UNIT_ID }}
+        run: bundle exec fastlane ios build
+        working-directory: apps/ios
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: apps/ios/build/DailyJournal.ipa
+          if-no-files-found: error
+          retention-days: 30

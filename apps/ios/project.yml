@@ -1,0 +1,38 @@
+name: DailyJournal
+options:
+  bundleIdPrefix: com.dailyjournal
+  deploymentTarget:
+    iOS: "16.0"
+packages:
+  GoogleMobileAds:
+    url: https://github.com/googleads/swift-package-manager-google-mobile-ads.git
+    from: 11.0.0
+targets:
+  DailyJournal:
+    type: application
+    platform: iOS
+    sources:
+      - path: DailyJournal
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dailyjournal.app
+        PRODUCT_NAME: Daily Journal
+        SWIFT_VERSION: 5.9
+        TARGETED_DEVICE_FAMILY: "1,2"
+        IPHONEOS_DEPLOYMENT_TARGET: 16.0
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_GADApplicationIdentifier: "$(ADMOB_IOS_APP_ID)"
+        INFOPLIST_KEY_ADMOB_BANNER_UNIT_ID: "$(ADMOB_IOS_BANNER_UNIT_ID)"
+        INFOPLIST_KEY_ADMOB_NATIVE_UNIT_ID: "$(ADMOB_IOS_NATIVE_UNIT_ID)"
+        INFOPLIST_KEY_ADMOB_INTERSTITIAL_UNIT_ID: "$(ADMOB_IOS_INTERSTITIAL_UNIT_ID)"
+        INFOPLIST_KEY_CONTENT_API_URL: "$(CONTENT_API_URL)"
+        CODE_SIGN_ENTITLEMENTS: DailyJournal/DailyJournal.entitlements
+        CODE_SIGN_STYLE: Automatic
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+        Release:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: RELEASE
+    dependencies:
+      - package: GoogleMobileAds
+        product: GoogleMobileAds

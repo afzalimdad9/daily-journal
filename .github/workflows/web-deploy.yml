@@ -1,0 +1,73 @@
+name: Web Build and Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/web/**"
+      - "packages/shared-types/**"
+      - "content/posts/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/web-deploy.yml"
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Daily Blog Generation"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install --no-audit --no-fund
+      - run: npm run build:web
+        env:
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+          NEXT_PUBLIC_ADSENSE_CLIENT_ID: ${{ vars.ADSENSE_CLIENT_ID }}
+          NEXT_PUBLIC_ADSENSE_SLOT_HEADER: ${{ vars.ADSENSE_SLOT_HEADER }}
+          NEXT_PUBLIC_ADSENSE_SLOT_FOOTER: ${{ vars.ADSENSE_SLOT_FOOTER }}
+          NEXT_PUBLIC_ADSENSE_SLOT_ANCHOR: ${{ vars.ADSENSE_SLOT_ANCHOR }}
+          NEXT_PUBLIC_ADSENSE_SLOT_SIDEBAR: ${{ vars.ADSENSE_SLOT_SIDEBAR }}
+          NEXT_PUBLIC_ADSENSE_SLOT_IN_ARTICLE: ${{ vars.ADSENSE_SLOT_IN_ARTICLE }}
+          NEXT_PUBLIC_ADSENSE_SLOT_IN_FEED: ${{ vars.ADSENSE_SLOT_IN_FEED }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: apps/web/.next
+          include-hidden-files: true
+          retention-days: 14
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Vercel
+        env:
+          DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+          SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "VERCEL_DEPLOY_HOOK is not configured; build artifact is ready but deployment was skipped."
+            exit 0
+          fi
+          curl --fail --silent --show-error --request POST "$DEPLOY_HOOK"
+          if [ -z "$SITE_URL" ]; then
+            echo "NEXT_PUBLIC_SITE_URL is not configured; skipping the post-deploy smoke test."
+            exit 0
+          fi
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent --show-error --output /dev/null "$SITE_URL/en"; then
+              echo "Post-deploy smoke test passed."
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "Post-deploy smoke test failed after 5 minutes." >&2
+          exit 1

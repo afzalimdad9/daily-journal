@@ -1,0 +1,45 @@
+name: Daily Blog Generation
+
+on:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-blog
+  cancel-in-progress: false
+
+jobs:
+  generate-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Generate and validate article
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          BLOG_TOPIC: ${{ vars.BLOG_TOPIC }}
+          BLOG_AUTHOR: ${{ vars.BLOG_AUTHOR }}
+          BLOG_AUTHOR_BIO: ${{ vars.BLOG_AUTHOR_BIO }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+        run: node scripts/generate-blog.js
+      - name: Commit and push article
+        run: |
+          git config user.name "Blog Bot"
+          git config user.email "blog-bot@users.noreply.github.com"
+          git add content/posts/
+          if git diff --cached --quiet; then
+            echo "No new article was generated."
+            exit 0
+          fi
+          git commit -m "Publish daily article $(date -u +%Y-%m-%d)"
+          git push

@@ -1,0 +1,38 @@
+default_platform(:ios)
+
+def env_or_default(key, fallback)
+  value = ENV[key]
+  value.nil? || value.empty? ? fallback : value
+end
+
+platform :ios do
+  desc "Build and export a signed App Store IPA in GitHub Actions"
+  lane :build do
+    team_id = ENV.fetch("APPLE_TEAM_ID")
+    profile_name = ENV.fetch("PROFILE_NAME")
+    bundle_id = "com.dailyjournal.app"
+    api_url = env_or_default("CONTENT_API_URL", "https://example.com/api")
+    ad_app_id = env_or_default("ADMOB_IOS_APP_ID", "ca-app-pub-3940256099942544~1458002511")
+    ad_banner_id = env_or_default("ADMOB_IOS_BANNER_UNIT_ID", "ca-app-pub-3940256099942544/2934735716")
+    ad_native_id = env_or_default("ADMOB_IOS_NATIVE_UNIT_ID", "ca-app-pub-3940256099942544/3986624511")
+    ad_interstitial_id = env_or_default("ADMOB_IOS_INTERSTITIAL_UNIT_ID", "ca-app-pub-3940256099942544/4411468910")
+
+    gym(
+      project: "DailyJournal.xcodeproj",
+      scheme: "DailyJournal",
+      configuration: "Release",
+      clean: true,
+      output_directory: "build",
+      output_name: "DailyJournal.ipa",
+      export_method: "app-store",
+      xcargs: "CONTENT_API_URL=#{api_url} ADMOB_IOS_APP_ID=#{ad_app_id} ADMOB_IOS_BANNER_UNIT_ID=#{ad_banner_id} ADMOB_IOS_NATIVE_UNIT_ID=#{ad_native_id} ADMOB_IOS_INTERSTITIAL_UNIT_ID=#{ad_interstitial_id} DEVELOPMENT_TEAM=#{team_id} CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' PROVISIONING_PROFILE_SPECIFIER='#{profile_name}'",
+      export_options: {
+        signingStyle: "manual",
+        teamID: team_id,
+        provisioningProfiles: {
+          bundle_id => profile_name
+        }
+      }
+    )
+  end
+end
