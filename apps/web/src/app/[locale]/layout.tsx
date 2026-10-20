@@ -15,7 +15,7 @@ export const dynamicParams = false;
 export const metadata: Metadata = {
   title: { default: "Daily Journal", template: "%s | Daily Journal" },
   description: "Thoughtful articles on ideas, technology, and everyday life.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://example.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://daily-journal-afzalimdad9.vercel.app"),
   alternates: {
     languages: Object.fromEntries(routing.locales.map((locale) => [locale, `/${locale}`]))
   },

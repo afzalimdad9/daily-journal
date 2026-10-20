@@ -17,7 +17,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0.0"
-        buildConfigField("String", "CONTENT_API_URL", "\"${(providers.gradleProperty("contentApiUrl").orNull ?: "https://example.com/api").trimEnd('/')}/\"")
+        buildConfigField("String", "CONTENT_API_URL", "\"${(providers.gradleProperty("contentApiUrl").orNull ?: "https://daily-journal-afzalimdad9.vercel.app/api").trimEnd('/')}/\"")
         buildConfigField("String", "AD_BANNER_UNIT_ID", "\"${providers.gradleProperty("adBannerUnitId").orNull ?: "ca-app-pub-3940256099942544/6300978111"}\"")
         buildConfigField("String", "AD_NATIVE_UNIT_ID", "\"${providers.gradleProperty("adNativeUnitId").orNull ?: "ca-app-pub-3940256099942544/2247696110"}\"")
         buildConfigField("String", "AD_INTERSTITIAL_UNIT_ID", "\"${providers.gradleProperty("adInterstitialUnitId").orNull ?: "ca-app-pub-3940256099942544/1033173712"}\"")

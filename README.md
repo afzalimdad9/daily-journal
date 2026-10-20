@@ -19,7 +19,7 @@ Add one `.md` or `.mdx` file per article under `content/posts/`. Required frontm
 - `GET /api/posts?locale=en&page=1&pageSize=20` — article summaries.
 - `GET /api/posts/{slug}?locale=en` — article metadata and Markdown body.
 
-Set the `CONTENT_API_URL` repository variable to the public API base, including `/api` (for example `https://blog.example.com/api`). Set `NEXT_PUBLIC_SITE_URL` to the canonical public site URL. Local MDX files are committed to the repository, so the web deployment rebuilds after content is pushed.
+The current Vercel URL is `https://daily-journal-afzalimdad9.vercel.app`. It is the starter default for canonical metadata, Android article links, and the Android content API. Set the `CONTENT_API_URL` repository variable to the public API base including `/api`, and `NEXT_PUBLIC_SITE_URL` to your canonical URL if you later add a custom domain. iOS link/API defaults will be updated when Apple signing is set up. Local MDX files are committed to the repository, so the web deployment rebuilds after content is pushed.
 
 ## Internationalization
 
@@ -35,7 +35,9 @@ The starter post is English. Translations must be authored as separate articles 
 | Android | Adaptive banner below the toolbar, native ad in the article feed, and a frequency-capped interstitial hook every third article opening |
 | iOS | Adaptive banner below navigation, in-feed native ad, in-article banner, and an interstitial every third article opening |
 
-Web ads are not requested until the visitor accepts the consent banner. The web implementation is an AdSense starter; review cookie, consent, and ad policies for the markets where the site operates. Native apps currently use Google's public test app/unit IDs by default. Replace them with registered production IDs before release. Android unit IDs are supplied through repository variables; iOS test IDs are in `BannerAdView.swift`, `NativeAdSlot.swift`, and `InterstitialAdManager.swift`, and the test app ID is in `project.yml`.
+Web ad slots stay in their support-message state until valid AdSense IDs are configured and the visitor accepts the consent banner. The current Vercel site has one starter article, so complete the publication with original content and real policy/contact information before requesting AdSense review. After approval, create AdSense units for the placements above and configure `ADSENSE_CLIENT_ID` (the `ca-pub-...` publisher ID) plus the six `ADSENSE_SLOT_*` unit IDs as GitHub Actions variables and Vercel environment variables. The web workflow build and Vercel's own deployment build both need these values; rerun the web workflow after changing GitHub variables. Add the exact `ads.txt` record AdSense provides at the site root when prompted in the AdSense account.
+
+The consent banner is only a starter accept/decline preference; it is not a Google-certified Consent Management Platform (CMP). Before serving personalized ads in regions where Google requires a CMP, implement a certified CMP and verify the site's privacy disclosures and consent behavior. Native apps currently use Google's public test app/unit IDs by default. Replace them with registered production IDs before release. Android unit IDs are supplied through repository variables; iOS test IDs are in `BannerAdView.swift`, `NativeAdSlot.swift`, and `InterstitialAdManager.swift`, and the test app ID is in `project.yml`.
 
 ## CI-only builds
 
@@ -74,7 +76,7 @@ Add these **Actions variables** as appropriate:
 | `ADMOB_ANDROID_APP_ID`, `ADMOB_ANDROID_BANNER_UNIT_ID`, `ADMOB_ANDROID_NATIVE_UNIT_ID`, `ADMOB_ANDROID_INTERSTITIAL_UNIT_ID` | Android AdMob identifiers |
 | `ADMOB_IOS_APP_ID`, `ADMOB_IOS_BANNER_UNIT_ID`, `ADMOB_IOS_NATIVE_UNIT_ID`, `ADMOB_IOS_INTERSTITIAL_UNIT_ID` | iOS AdMob identifiers |
 
-Set `NEXT_PUBLIC_SITE_URL` and the AdSense variables as build-time variables for the web workflow and in the Vercel project when deploying through its deploy hook. When using another host, replace the deploy step in `web-deploy.yml`. The iOS workflow expects an App Store distribution profile and certificate matching bundle ID `com.dailyjournal.app`; update `project.yml` and the Fastlane lane together if the bundle ID changes. Replace `your-domain.example` in Android/iOS link configuration and publish the matching `assetlinks.json` and Apple App Site Association files to enable verified universal links. Add secrets only in the repository's Actions settings, never to source files.
+Set `NEXT_PUBLIC_SITE_URL` and the AdSense variables as build-time variables for the web workflow and in the Vercel project when deploying through its deploy hook. When using another host, replace the deploy step in `web-deploy.yml`. Android uses the current Vercel host in its intent filter; verified Android App Links additionally require a matching `assetlinks.json` with the release signing certificate fingerprint. iOS universal links are deferred until Apple Developer signing setup; replace the placeholder host in its entitlement and publish the Apple App Site Association file before enabling them. The iOS workflow expects an App Store distribution profile and certificate matching bundle ID `com.dailyjournal.app`; update `project.yml` and the Fastlane lane together if the bundle ID changes. Add secrets only in the repository's Actions settings, never to source files.
 
 The daily generator rejects missing metadata, duplicate topics/slugs, invalid descriptions, non-question H2s, answer paragraphs outside its 40–60 word range, and missing source links/list structures. These checks improve consistency but cannot guarantee factual accuracy, rankings, or “100%” SEO/AIO/GEO optimization; review Gemini output and citations. The script intentionally refuses to run outside GitHub Actions.
 

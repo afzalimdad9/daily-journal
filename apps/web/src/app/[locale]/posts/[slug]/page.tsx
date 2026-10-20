@@ -80,7 +80,7 @@ export default async function PostPage({ params }: Props) {
         description: post.description,
         datePublished: post.date,
         author: { "@type": "Person", name: post.author },
-        mainEntityOfPage: new URL(`/${locale}/posts/${post.slug}`, process.env.NEXT_PUBLIC_SITE_URL || "https://example.com").toString()
+        mainEntityOfPage: new URL(`/${locale}/posts/${post.slug}`, process.env.NEXT_PUBLIC_SITE_URL || "https://daily-journal-afzalimdad9.vercel.app").toString()
       }).replace(/</g, "\\u003c") }} />
     </article>
   );

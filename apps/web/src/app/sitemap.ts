@@ -3,7 +3,7 @@ import { getPosts } from "@/lib/posts";
 import { routing } from "@/i18n/routing";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://example.com").replace(/\/+$/, "");
+  const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://daily-journal-afzalimdad9.vercel.app").replace(/\/+$/, "");
   const routes = ["", "/about", "/contact", "/privacy", "/terms", "/search"];
   const staticEntries = routing.locales.flatMap((locale) => routes.map((route) => ({
     url: `${base}/${locale}${route}`,
