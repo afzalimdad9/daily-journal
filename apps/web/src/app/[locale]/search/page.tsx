@@ -13,6 +13,7 @@ export default function SearchPage() {
   const [posts, setPosts] = useState<BlogPostSummary[]>([]);
   const [total, setTotal] = useState(0);
   const [error, setError] = useState("");
+  const [searching, setSearching] = useState(false);
   const latestRequest = useRef(0);
 
   async function search(value: string) {
@@ -22,8 +23,13 @@ export default function SearchPage() {
       setPosts([]);
       setTotal(0);
       setError("");
+      setSearching(false);
       return;
     }
+    setPosts([]);
+    setTotal(0);
+    setError("");
+    setSearching(true);
     try {
       const response = await fetch(`/api/posts?q=${encodeURIComponent(value)}&locale=${encodeURIComponent(locale)}`);
       if (!response.ok) throw new Error(`Search request failed: ${response.status}`);
@@ -32,11 +38,13 @@ export default function SearchPage() {
       setPosts(data.posts);
       setTotal(data.total);
       setError("");
+      setSearching(false);
     } catch {
       if (requestId !== latestRequest.current) return;
       setPosts([]);
       setTotal(0);
       setError(t("searchError"));
+      setSearching(false);
     }
   }
 
@@ -55,11 +63,12 @@ export default function SearchPage() {
             <button className="search-button" type="button" onClick={() => void search(query)}>{t("search")}</button>
           </div>
           {error && <p role="alert" className="search-status">{error}</p>}
-          {!error && query.trim() && <p className="search-status" role="status">{total} {t(total === 1 ? "articleLabel" : "articlesLabel")}</p>}
+          {searching && <p className="search-status" role="status">{t("searching")}</p>}
+          {!error && !searching && query.trim() && <p className="search-status" role="status">{total} {t(total === 1 ? "articleLabel" : "articlesLabel")}</p>}
         </div>
       </header>
       <section className="container prose-page">
-        {query.trim() && !error && posts.length === 0 && <p className="empty-state">{t("noSearchResults")}</p>}
+        {query.trim() && !error && !searching && posts.length === 0 && <p className="empty-state">{t("noSearchResults")}</p>}
         {posts.length > 0 && (
           <div className="search-results">
             {posts.map((post) => (
