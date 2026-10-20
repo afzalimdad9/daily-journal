@@ -146,7 +146,8 @@ private fun DailyJournalScreen(repository: BlogRepository, initialSlug: String?)
                         val markwon = remember(context) { Markwon.create(context) }
                         val articleColor = MaterialTheme.colorScheme.onSurface.toArgb()
                         var paragraphCount = 0
-                        body.split(Regex("\\n\\s*\\n")).forEach { block ->
+                        val markdown = body.trimStart().replaceFirst(Regex("^#\\s+[^\\r\\n]+\\r?\\n+"), "")
+                        markdown.split(Regex("\\n\\s*\\n")).forEach { block ->
                             val text = block.trim()
                             if (text.isNotEmpty()) {
                                 AndroidView(

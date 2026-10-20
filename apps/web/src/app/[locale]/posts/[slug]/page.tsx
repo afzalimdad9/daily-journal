@@ -70,7 +70,7 @@ export default async function PostPage({ params }: Props) {
                   }
                 }}
               >
-                {post.content.replace(/^# .+\r?\n+/, "")}
+                {post.content.trimStart().replace(/^# .+\r?\n+/, "")}
               </ReactMarkdown>
             );
           })()}
