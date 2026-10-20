@@ -1,0 +1,42 @@
+---
+title: "Open Source Is a License, Not Just a Price Tag"
+date: "2026-10-19"
+description: "What an open-source license grants, what it may require, and how to check the terms before reusing code."
+slug: "open-source-licenses-explained"
+locale: "en"
+keywords: ["open source", "software licenses", "copyright", "MIT", "GPL"]
+author: "Daily Journal Editorial"
+category: "Software"
+---
+
+# Open Source Is a License, Not Just a Price Tag
+
+“Free software” can mean software that costs nothing, software that grants users important freedoms, or both. Open-source software has a more specific meaning: its license makes the source available and grants permissions that meet the [Open Source Definition](https://opensource.org/osd/). The price alone does not tell you what you are allowed to do with the code.
+
+That distinction matters whether you are choosing a library for a project, copying a small code example, or publishing a tool of your own. Copyright still applies. A license is the author's written permission to use, modify, and share the work under stated conditions.
+
+## Read the license attached to the project
+
+Look for a `LICENSE` or `COPYING` file in the repository. Check whether the project documents different terms for specific folders, assets, or dependencies. A repository without a clear license should not be treated as permission to reuse its contents; ask the author or choose code with terms you understand.
+
+Also check the version you are actually using. A project can change its license over time, and a dependency may include separate notices. The license of your application does not automatically replace the licenses of the components it uses.
+
+## Common license families, in broad strokes
+
+Permissive licenses such as MIT and BSD generally allow broad reuse, including in proprietary projects, while requiring preservation of notices and disclaimers. Apache License 2.0 has similar broad reuse permissions and includes express patent-license terms and conditions.
+
+Copyleft licenses such as the GNU General Public License (GPL) allow use, modification, and redistribution, while requiring that certain distributed derivative works remain under the same license and that corresponding source be made available under the license terms. The precise obligations depend on the license text and how the software is used.
+
+These are high-level descriptions, not a compliance checklist. For example, the GNU Lesser General Public License (LGPL) has different conditions from the GPL, and the Affero GPL addresses network use differently. When the distinction matters, read the license itself and get qualified advice for your situation.
+
+## Keep a record as you build
+
+For a personal project, start a simple dependency inventory. Record each component's name, version, source, and license. Keep required copyright and license notices when redistributing code. If your project has a release process, include a review of license changes in dependency updates.
+
+For a team or commercial product, use a consistent review process rather than relying on a developer's memory. A software bill of materials can help identify components, but it does not by itself determine whether your use complies with every license.
+
+## Choose with the actual terms in mind
+
+Before adopting a dependency, ask what you need to do with it: use it internally, ship it to customers, modify it, or offer it as a hosted service. Then compare those plans with the license and the project's notices. The [choose a license guide](https://choosealicense.com/) provides an approachable comparison, and the [Open Source Initiative license list](https://opensource.org/licenses) links to licenses and their texts.
+
+Open source is a collaboration model backed by legal permissions. Understanding those permissions helps you reuse software respectfully and make the same clarity available to people who use your own work.

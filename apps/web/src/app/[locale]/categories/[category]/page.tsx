@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPosts } from "@/lib/posts";
+import { formatDate } from "@/lib/format-date";
+import { getTranslations } from "next-intl/server";
 
 type Props = { params: Promise<{ locale: string; category: string }> };
 
@@ -11,20 +13,32 @@ export async function generateStaticParams() {
 
 export default async function CategoryPage({ params }: Props) {
   const { locale, category } = await params;
-  const posts = getPosts(locale).filter((post) => post.category?.toLowerCase() === decodeURIComponent(category).toLowerCase());
+  const categoryName = decodeURIComponent(category);
+  const posts = getPosts(locale).filter((post) => post.category?.toLowerCase() === categoryName.toLowerCase());
   if (!posts.length) notFound();
+  const t = await getTranslations({ locale });
 
   return (
-    <section className="container min-h-[50vh] py-10">
-      <h1 className="mb-6 text-3xl font-bold">{decodeURIComponent(category)}</h1>
-      <ul className="space-y-5">
-        {posts.map((post) => (
-          <li key={post.slug}>
-            <Link className="text-xl font-semibold text-indigo-600" href={`/${locale}/posts/${post.slug}`}>{post.title}</Link>
-            <p className="mt-1 text-[var(--muted)]">{post.description}</p>
-          </li>
-        ))}
-      </ul>
-    </section>
+    <>
+      <header className="page-hero">
+        <div className="container">
+          <span className="eyebrow">{t("categoryLabel")}</span>
+          <h1 className="page-title">{categoryName}</h1>
+          <p className="page-intro">{posts.length} {t("articlesLabel")}</p>
+        </div>
+      </header>
+      <section className="container prose-page">
+        <div className="post-grid">
+          {posts.map((post) => (
+            <article className="post-card" key={post.slug}>
+              <div className="post-meta"><time dateTime={post.date}>{formatDate(post.date, locale)}</time></div>
+              <h3><Link href={`/${locale}/posts/${post.slug}`}>{post.title}</Link></h3>
+              <p>{post.description}</p>
+              <Link className="text-link" href={`/${locale}/posts/${post.slug}`}>{t("readMore")} <span aria-hidden="true">→</span></Link>
+            </article>
+          ))}
+        </div>
+      </section>
+    </>
   );
 }

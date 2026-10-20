@@ -1,0 +1,44 @@
+---
+title: "Passkeys, Explained Without the Hype"
+date: "2026-10-18"
+description: "How passkeys replace typed passwords, what happens during sign-in, and a few practical checks before moving an account."
+slug: "passkeys-explained"
+locale: "en"
+keywords: ["passkeys", "passwords", "sign-in", "authentication", "FIDO"]
+author: "Daily Journal Editorial"
+category: "Technology"
+---
+
+# Passkeys, Explained Without the Hype
+
+A passkey is a sign-in credential based on public-key cryptography. Instead of typing a shared secret into a website, your device or password manager uses a private key to answer a challenge from the service. The service keeps the matching public key, which cannot be used to recreate the private key.
+
+For a person signing in, the experience often looks like approving a prompt with a device PIN, fingerprint, or face recognition. The biometric check, when used, is handled by the device; it is not sent to the website as your passkey.
+
+## What changes compared with a password?
+
+With a password, you create a secret and present it to a service during sign-in. That creates familiar problems: people reuse passwords, type them into convincing fake pages, or lose track of where they stored them.
+
+A passkey is scoped to the service that created it. In standards-based sign-in, the browser checks whether the credential belongs to the site requesting authentication. This makes it much harder to use a passkey on a lookalike site by mistake. The [FIDO Alliance passkey overview](https://fidoalliance.org/passkeys/) and the [Web Authentication standard](https://www.w3.org/TR/webauthn-3/) describe the underlying approach.
+
+## Where your passkey lives
+
+Some passkeys are tied to a device. Others are synchronized across devices by the platform or password manager you chose. Synchronization can make account recovery and device changes easier, but it means your provider account and recovery options matter too.
+
+Before replacing a password, check which provider stores the passkey, how you will sign in on another device, and what recovery path the service provides. If a service offers several passkeys or security keys, adding a second supported method can reduce the chance that one lost device locks you out.
+
+## A calm setup checklist
+
+1. Start with an important account that clearly supports passkeys, such as an account you already protect with multifactor authentication.
+2. Read the service's recovery instructions before you change sign-in methods.
+3. Confirm where the passkey is saved and whether it is available on your other devices.
+4. Keep a separate recovery option that you can actually access, and store any backup codes securely.
+5. Test signing in on another device or browser before removing a password-based fallback.
+
+The names and prompts differ between services. If a website asks you to scan a QR code or approve a sign-in, make sure you started the process on the real service and understand which device is being authorized.
+
+## Not a reason to skip every other safeguard
+
+Passkeys reduce some password-related risks, but they do not make every account problem disappear. A compromised device, weak account recovery process, or social engineering attempt can still matter. Keep devices and recovery channels protected, and review the security options offered by each service.
+
+You do not need to move every account in one sitting. Try one, confirm that you can recover it, and decide whether the convenience and recovery trade-offs fit your routine. That is a more useful measure than treating any new sign-in technology as magic.

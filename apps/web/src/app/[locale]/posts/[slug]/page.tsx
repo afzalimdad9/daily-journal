@@ -36,42 +36,51 @@ export default async function PostPage({ params }: Props) {
   if (!post) notFound();
 
   return (
-    <article className="container py-10">
-      <div className="mx-auto max-w-6xl">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,72ch)_300px]">
-          <div>
-            <header className="mb-8">
-              <p className="mb-3 text-sm text-[var(--muted)]">{post.category ?? "Journal"} · <time dateTime={post.date}>{formatDate(post.date, locale)}</time> · {post.author}</p>
-              <h1 className="text-4xl font-bold">{post.title}</h1>
-              <p className="mt-4 text-lg text-[var(--muted)]">{post.description}</p>
-            </header>
-            <div className="article-content">
-              {(() => {
-                let paragraphCount = 0;
-                return (
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                      p: ({ children }) => {
-                        paragraphCount += 1;
-                        return (
-                          <>
-                            <p>{children}</p>
-                            {paragraphCount === 2 && <AdSlot slotId="article-after-second-paragraph" format="in-article" />}
-                          </>
-                        );
-                      }
-                    }}
-                  >
-                    {post.content.replace(/^# .+\r?\n+/, "")}
-                  </ReactMarkdown>
-                );
-              })()}
-              <div className="my-8"><AdSlot slotId="article-mid" format="in-article" /></div>
-            </div>
-          </div>
-          <aside className="hidden lg:block"><AdSlot slotId="article-sidebar" format="sidebar" /></aside>
+    <article className="container article-shell">
+      <div className="article-topline">
+        <a href={`/${locale}`}>Daily Journal</a><span aria-hidden="true">/</span>
+        {post.category && <a href={`/${locale}/categories/${encodeURIComponent(post.category.toLowerCase())}`}>{post.category}</a>}
+      </div>
+      <header className="article-header">
+        <div className="post-meta">
+          {post.category && <span className="category-pill">{post.category}</span>}
+          <time dateTime={post.date}>{formatDate(post.date, locale)}</time>
+          <span>·</span>
+          <span>{post.author}</span>
         </div>
+        <h1>{post.title}</h1>
+        <p className="article-deck">{post.description}</p>
+      </header>
+      <div className="article-layout">
+        <div className="article-content">
+          {(() => {
+            let paragraphCount = 0;
+            return (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  p: ({ children }) => {
+                    paragraphCount += 1;
+                    return (
+                      <>
+                        <p>{children}</p>
+                        {paragraphCount === 2 && <AdSlot slotId="article-after-second-paragraph" format="in-article" />}
+                      </>
+                    );
+                  }
+                }}
+              >
+                {post.content.replace(/^# .+\r?\n+/, "")}
+              </ReactMarkdown>
+            );
+          })()}
+          <div className="my-8"><AdSlot slotId="article-mid" format="in-article" /></div>
+        </div>
+        <aside className="article-sidebar">
+          <AdSlot slotId="article-sidebar" format="sidebar" />
+          <strong>{post.author}</strong>
+          <span>{formatDate(post.date, locale)}</span>
+        </aside>
       </div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",

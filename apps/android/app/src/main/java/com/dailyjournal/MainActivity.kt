@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.text.method.LinkMovementMethod
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatDelegate
@@ -12,9 +14,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -30,6 +35,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
+import io.noties.markwon.Markwon
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -123,7 +129,12 @@ private fun DailyJournalScreen(repository: BlogRepository, initialSlug: String?)
                 }
             }
         ) { padding ->
-            Column(Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp)) {
+            Column(
+                Modifier.fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 16.dp)
+                    .then(if (selected != null) Modifier.verticalScroll(rememberScrollState()) else Modifier)
+            ) {
                 OutlinedTextField(query, { query = it }, label = { Text(stringResource(R.string.search)) }, modifier = Modifier.fillMaxWidth())
                 selected?.let { post ->
                     TextButton(onClick = { selected = null }) { Text("← ${stringResource(R.string.home)}") }
@@ -132,12 +143,26 @@ private fun DailyJournalScreen(repository: BlogRepository, initialSlug: String?)
                     Text(post.description, modifier = Modifier.padding(top = 12.dp))
                     articleError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
                     articleBody?.let { body ->
+                        val markwon = remember(context) { Markwon.create(context) }
+                        val articleColor = MaterialTheme.colorScheme.onSurface.toArgb()
                         var paragraphCount = 0
                         body.split(Regex("\\n\\s*\\n")).forEach { block ->
                             val text = block.trim()
                             if (text.isNotEmpty()) {
-                                Text(text, modifier = Modifier.padding(top = 12.dp))
-                                if (!text.startsWith("#") && !text.startsWith("- ") && !text.startsWith("|")) {
+                                AndroidView(
+                                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                                    factory = { viewContext ->
+                                        TextView(viewContext).apply {
+                                            textSize = 16f
+                                            setTextColor(articleColor)
+                                            setLineSpacing(0f, 1.35f)
+                                            movementMethod = LinkMovementMethod.getInstance()
+                                            setTextIsSelectable(true)
+                                        }
+                                    },
+                                    update = { textView -> markwon.setMarkdown(textView, text) }
+                                )
+                                if (!text.matches(Regex("(?s)^(#{1,6}\\s|[-*+]\\s|\\d+[.)]\\s|>|\\||---+$).*"))) {
                                     paragraphCount += 1
                                     if (paragraphCount == 2) AdBanner()
                                 }

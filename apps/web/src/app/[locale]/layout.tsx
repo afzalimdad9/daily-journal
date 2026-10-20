@@ -38,12 +38,28 @@ export default async function LocaleLayout({ children, params }: { children: Rea
       <body>
         <NextIntlClientProvider messages={messages}>
           <SiteHeader locale={locale} />
-          <div className="container py-4"><AdSlot slotId="header-banner" format="leaderboard" /></div>
+          <div className="container"><AdSlot slotId="header-banner" format="leaderboard" /></div>
           <main>{children}</main>
-          <footer className="container my-10 border-t py-8 text-sm text-[var(--muted)]">
-            <div className="mb-4"><AdSlot slotId="footer-banner" format="footer" /></div>
-            <p>© {new Date().getFullYear()} Daily Journal</p>
-            <nav className="mt-2 flex gap-4"><a href={`/${locale}/privacy`}>{t("privacy")}</a><a href={`/${locale}/terms`}>{t("terms")}</a><a href={`/${locale}/contact`}>{t("contact")}</a></nav>
+          <footer className="site-footer">
+            <div className="container">
+              <div className="mb-4"><AdSlot slotId="footer-banner" format="footer" /></div>
+              <div className="footer-inner">
+                <div>
+                  <a className="brand" href={`/${locale}`}><span className="brand-mark" aria-hidden="true">dj</span><span>Daily Journal</span></a>
+                  <p className="footer-note">{t("footerNote")}</p>
+                </div>
+                <nav className="footer-links" aria-label="Footer navigation">
+                  <a href={`/${locale}/about`}>{t("about")}</a>
+                  <a href={`/${locale}/contact`}>{t("contact")}</a>
+                  <a href={`/${locale}/privacy`}>{t("privacy")}</a>
+                  <a href={`/${locale}/terms`}>{t("terms")}</a>
+                </nav>
+              </div>
+              <div className="footer-bottom">
+                <span>© {new Date().getFullYear()} Daily Journal</span>
+                <span>{t("footerByline")}</span>
+              </div>
+            </div>
           </footer>
           <AdSlot className="mobile-anchor" slotId="mobile-anchor" format="anchor" />
           <ConsentBanner />
