@@ -22,7 +22,7 @@ data class CachedPost(
 
 @Entity(tableName = "articles", primaryKeys = ["cacheKey"])
 data class CachedArticle(
-    @PrimaryKey val cacheKey: String,
+    val cacheKey: String,
     val content: String
 )
 
